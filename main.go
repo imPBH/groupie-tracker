@@ -20,7 +20,31 @@ type Artist struct {
 	Relations    string `json:"relations"`
 }
 
+type LocationIndex struct {
+	Index []Location `json:"index"`
+}
+
+type Location struct {
+	ID int `json:"id"`
+	Locations []string `json:"locations"`
+	Dates string `json:"dates"`
+}
+
 func main() {
+	artist := GetArtists()
+	locations := GetLocations()
+
+	for i := range artist{
+		fmt.Println(artist[i].Name)
+	}
+
+	for i := range locations.Index{
+		fmt.Println(locations.Index[i].Locations)
+	}
+
+}
+
+func GetArtists() []Artist {
 	var artistData []Artist
 
 	resp, err := http.Get("https://groupietrackers.herokuapp.com/api/artists")
@@ -38,7 +62,26 @@ func main() {
 
 	json.Unmarshal([]byte(sb), &artistData)
 
-	for i := range artistData {
-		fmt.Println(artistData[i].Name)
+	return artistData
+}
+
+func GetLocations() LocationIndex{
+	var artistLocation LocationIndex
+
+	resp, err := http.Get("https://groupietrackers.herokuapp.com/api/locations")
+	if err != nil {
+		log.Fatalln(err)
 	}
+
+	//We Read the response body on the line below.
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	//Convert the body to type string
+	sb := string(body)
+
+	json.Unmarshal([]byte(sb), &artistLocation)
+
+	return artistLocation
 }
