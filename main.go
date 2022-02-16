@@ -3,10 +3,16 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"html/template"
 	"io/ioutil"
 	"log"
 	"net/http"
 )
+
+type Page struct {
+	Title  string
+	Artists *[]Artist
+}
 
 type Artist struct {
 	Id           int      `json:"id"`
@@ -31,8 +37,17 @@ type Relation struct {
 	DatesLocation map[string][]string `json:"datesLocations"`
 }
 
+var imagesURLs []string
+var artist []Artist
+var p = Page{
+	Title:  "Groupie Tracker",
+	Artists: &artist,
+}
+
+
 func main() {
-	artist := GetArtists()
+	artist = GetArtists()
+
 
 	for i := range artist {
 		datesLocations := GetRelation(artist[i].Relations).DatesLocation
@@ -51,8 +66,23 @@ func main() {
 			fmt.Printf("Location = %s | Dates = %+q\n", location, datesLocations[location])
 		}
 		fmt.Printf("Image URL = %s\n\n", artist[i].Image)
+		imagesURLs = append(imagesURLs, artist[i].Image)
 	}
 
+	fs := http.FileServer(http.Dir("templates"))
+	router := http.NewServeMux()
+
+	//Create a server and listen on port 8080
+	fmt.Println("Starting server on port 8080")
+
+	//Serve template for the homepage
+	router.HandleFunc("/", HandlerHomepage)
+
+	//Handle requests for files in /templates (ex : style.css)
+	router.Handle("/templates/", http.StripPrefix("/templates/", fs))
+
+	//Start server on port 8080
+	http.ListenAndServe(":8080", router)
 }
 
 func GetArtists() []Artist {
@@ -128,4 +158,9 @@ func removeDuplicateStr(strSlice []string) []string {
 		}
 	}
 	return list
+}
+
+func HandlerHomepage(w http.ResponseWriter, r *http.Request) {
+	t, _ := template.ParseGlob("templates/*.html")
+	t.ExecuteTemplate(w, "index.html", p)
 }
