@@ -2,14 +2,20 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{{.Title}}</title>
+    <title>Inst'Artists</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-{{range .Artists}}
-<div>
-    <img src={{.Image}}>
-    {{.Name}}
-</div>
-{{end}}
+<nav class="navbar">
+    <div class="nav-wrapper">
+        <img src="resources/logo.png" class="brand-img" alt="">
+        <input type="text" class="search-box" placeholder="Rechercher">
+        <div class="nav-items">
+            <img src="resources/home.svg" class="icon" alt="">
+            <img src="resources/discover.svg" class="icon" alt="">
+            <img src="resources/like.svg" class="icon" alt="">
+        </div>
+    </div>
+</nav>
 </body>
 </html>
