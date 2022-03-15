@@ -7,11 +7,17 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strconv"
 )
 
 type Page struct {
-	Title  string
+	Title   string
 	Artists *[]Artist
+}
+
+type ProfilePage struct {
+	ArtistId int
+	Artist   Artist
 }
 
 type Artist struct {
@@ -40,7 +46,7 @@ type Relation struct {
 var imagesURLs []string
 var artist []Artist
 var p = Page{
-	Title:  "Groupie Tracker",
+	Title:   "Groupie Tracker",
 	Artists: &artist,
 }
 
@@ -148,4 +154,24 @@ func HandlerHomepage(w http.ResponseWriter, r *http.Request) {
 func HandlerIndex(w http.ResponseWriter, r *http.Request) {
 	t, _ := template.ParseGlob("templates/*.html")
 	t.ExecuteTemplate(w, "index.html", p)
+}
+
+func HandlerProfile(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "GET":
+		if err := r.ParseForm(); err != nil {
+			fmt.Fprintf(w, "ParseForm() err: %v", err)
+			return
+		}
+		artistIdString := r.FormValue("id")
+		artistId, _ := strconv.Atoi(artistIdString)
+		fmt.Println(artistId)
+		fmt.Println(artist[artistId-1])
+
+		pProfile := ProfilePage{
+			Artist: artist[artistId-1],
+		}
+		t, _ := template.ParseGlob("templates/*.html")
+		t.ExecuteTemplate(w, "profile.html", pProfile)
+	}
 }
