@@ -142,5 +142,10 @@ func removeDuplicateStr(strSlice []string) []string {
 
 func HandlerHomepage(w http.ResponseWriter, r *http.Request) {
 	t, _ := template.ParseGlob("templates/*.html")
+	t.ExecuteTemplate(w, "homepage.html", p)
+}
+
+func HandlerIndex(w http.ResponseWriter, r *http.Request) {
+	t, _ := template.ParseGlob("templates/*.html")
 	t.ExecuteTemplate(w, "index.html", p)
 }
