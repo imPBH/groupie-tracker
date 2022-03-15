@@ -25,10 +25,10 @@
     <div class="container">
         <div class="profile">
             <div class="profile-image">
-                <img src="https://pbs.twimg.com/profile_images/634514155261833216/czgYrPLQ_400x400.jpg">
+                <img src={{.Artist.Image}}>
             </div>
             <div class="profile-user-details">
-                <h1 class="profile-user-name">Travis Scott</h1>
+                <h1 class="profile-user-name">{{.Artist.Name}}</h1>
                 <button class="btn profile-follow-btn">Suivre</button>
             </div>
             <div class="profile-stats">
@@ -43,13 +43,15 @@
                     </li>
                     <li>
                         Since
-                        <span class="profile-stat-count">2013</span>
+                        <span class="profile-stat-count">{{.Artist.CreationDate}}</span>
                     </li>
                 </ul>
             </div>
             <div class="profile-bio">
                 <p>
-                    Lorem ipsum dolor sit, amet consectetur adipisicing elit 📷✈️🏕️
+                    {{range .Artist.Members}}
+                        {{.}}.
+                    {{end}}
                 </p>
             </div>
         </div>
