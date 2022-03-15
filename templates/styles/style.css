@@ -1,12 +1,43 @@
-@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap');
+:root {
+    font-size: 10px;
+}
 
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-.navbar{
+body {
+    font-family: "Open Sans", Arial, sans-serif;
+    min-height: 100vh;
+    background-color: #fafafa;
+    color: #262626;
+    padding-bottom: 3rem;
+}
+
+.container {
+    max-width: 93.5rem;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.container-gallery {
+    max-width: 95rem;
+    margin: 0 auto;
+    padding: 0 2rem;
+    border-top: solid #DBDBDB 1px;
+}
+
+.container-gallery-homepage {
+    max-width: 90%;
+    margin: 0 auto;
+    border-top: solid #DBDBDB 1px;
+}
+
+/* Navbar Section*/
+
+.navbar {
     position: relative;
     top: 10px;
     left: 0;
@@ -19,7 +50,7 @@
     padding: 5px 0;
 }
 
-.nav-wrapper{
+.nav-wrapper {
     position: absolute;
     top: -10%;
     width: 1000px;
@@ -29,7 +60,7 @@
     align-items: center;
 }
 
-.search-box{
+.search-box {
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
@@ -43,24 +74,18 @@
     text-transform: capitalize;
 }
 
-.search-box::placeholder{
-    color: rgba(0, 0, 0, 0.5);
-}
-
-.nav-items{
-    height: 22px;
-    position: relative;
-}
-
-.icon{
+.icon {
     cursor: pointer;
     margin: 0 10px;
     display: inline-block;
 }
 
-.user-profile{
-    width: 22px;
-    border-radius: 50%;
-    background-image: url(img/profile-pic.png);
-    background-size: cover;
+.btn {
+    display: inline-block;
+    font: inherit;
+    background: none;
+    border: none;
+    color: inherit;
+    padding: 0;
+    cursor: pointer;
 }
