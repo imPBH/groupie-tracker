@@ -165,9 +165,6 @@ func HandlerProfile(w http.ResponseWriter, r *http.Request) {
 		}
 		artistIdString := r.FormValue("id")
 		artistId, _ := strconv.Atoi(artistIdString)
-		fmt.Println(artistId)
-		fmt.Println(artist[artistId-1])
-
 		pProfile := ProfilePage{
 			Artist: artist[artistId-1],
 		}
