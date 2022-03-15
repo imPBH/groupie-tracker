@@ -1,0 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato');
+@import url('https://fonts.googleapis.com/css?family=Poppins:900i');
+
+/* Homepage */
+
+body{
+    background:
+        /* top, transparent black, faked with gradient */
+            linear-gradient(
+                    rgba(0, 0, 0, 0.8),
+                    rgba(0, 0, 0, 0.8)
+            ),
+                /* bottom, image */
+            url("resources/stage.jpg") no-repeat center center fixed;
+}
+
+
+.navbar-landing img {
+    padding-left: 50px;
+    padding-top: 10px;
+}
+
+.container-landing {
+    position: relative;
+}
+
+.text {
+    padding-left: 20%;
+    font-family: 'Lato', sans-serif;
+    color: white;
+    max-width: 500px;
+    margin: 0;
+    transform: translateY(50%);
+}
+
+.text h1 {
+    font-weight: 600;
+}
+
+.text h2 {
+    font-weight: 300;
+}
