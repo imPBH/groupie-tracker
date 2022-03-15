@@ -175,3 +175,112 @@ body {
 .profile-follow-btn {
     font-weight: 600;
 }
+
+/* Gallery Section */
+
+.gallery {
+    display: flex;
+    flex-wrap: wrap;
+    margin: -1rem -1rem;
+    padding-bottom: 3rem;
+    padding-top: 2rem;
+    justify-content: center;
+}
+
+.gallery-item {
+    position: relative;
+    margin: 1rem;
+    color: #fff;
+}
+
+.gallery-item-homepage {
+    position: relative;
+    margin: 1rem;
+    color: #fff;
+}
+
+.gallery-item-homepage img{
+    border-top: 2px solid #dbdbdb;
+    border-bottom: 2px solid #dbdbdb;
+    border-right: 2px solid #dbdbdb;
+    border-left: 2px solid #dbdbdb;
+}
+
+.gallery-image {
+    width: 285px;
+    height: 285px;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+.gallery-image-homepage {
+    width: 300px;
+    height: 300px;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+.gallery-item-homepage img{
+    border-top: 2px solid #dbdbdb;
+    border-bottom: 2px solid #dbdbdb;
+    border-right: 2px solid #dbdbdb;
+    border-left: 2px solid #dbdbdb;
+}
+
+.gallery-choice {
+    padding-top: 2rem;
+    justify-content: center;
+    display: flex;
+}
+
+.gallery-choice>div:first-child {
+    margin-right: 150px;
+}
+
+.choice-items {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    letter-spacing: 2px;
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.choice-items img {
+    margin-right: 5px;
+}
+
+.choice-items a {
+    text-decoration: none;
+    color: black;
+}
+
+.grey {
+    color: #bdbdbd;
+}
+
+.black {
+    color: black;
+}
+
+.user-info {
+    border-top: 2px solid #dbdbdb;
+    border-left: 2px solid #dbdbdb;
+    border-right: 2px solid #dbdbdb;
+    border-radius: 5px 5px 0 0;
+    font-size: 15px;
+    color: black;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    display: flex;
+}
+
+.username {
+    margin: auto;
+    text-decoration: none;
+    color: black;
+}
+
+.homepage-bttn {
+    text-decoration: none;
+}
