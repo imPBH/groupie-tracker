@@ -63,6 +63,7 @@ func main() {
 	router.HandleFunc("/", HandlerIndex)
 	router.HandleFunc("/homepage", HandlerHomepage)
 	router.HandleFunc("/profile", HandlerProfile)
+	router.HandleFunc("/profiledates", HandlerProfiledates)
 
 	//Handle requests for files in /templates (ex : style.css)
 	router.Handle("/templates/", http.StripPrefix("/templates/", fs))
@@ -170,5 +171,22 @@ func HandlerProfile(w http.ResponseWriter, r *http.Request) {
 		}
 		t, _ := template.ParseGlob("templates/*.html")
 		t.ExecuteTemplate(w, "profile.html", pProfile)
+	}
+}
+
+func HandlerProfiledates(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case "GET":
+		if err := r.ParseForm(); err != nil {
+			fmt.Fprintf(w, "ParseForm() err: %v", err)
+			return
+		}
+		artistIdString := r.FormValue("id")
+		artistId, _ := strconv.Atoi(artistIdString)
+		pProfile := ProfilePage{
+			Artist: artist[artistId-1],
+		}
+		t, _ := template.ParseGlob("templates/*.html")
+		t.ExecuteTemplate(w, "profiledates.html", pProfile)
 	}
 }
