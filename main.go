@@ -92,9 +92,6 @@ var p = Page{
 func main() {
 	artist = GetArtists()
 
-	artist := GetArtistApi("PNL")
-	albums := GetArtistAlbums(artist.Id)
-	fmt.Println(albums)
 	fs := http.FileServer(http.Dir("templates"))
 	router := http.NewServeMux()
 
@@ -215,6 +212,37 @@ func GetArtistAlbums(artistId int) []AlbumsApiData {
 	return dataApi.Data
 }
 
+func FilterAlbums(albums []AlbumsApiData) []AlbumsApiData {
+	var newAlbums []AlbumsApiData
+
+	for _, album := range albums {
+		if album.RecordType == "album" {
+			newAlbums = append(newAlbums, album)
+		}
+	}
+	return RemoveDuplicatesAlbumsApi(newAlbums)
+}
+
+func RemoveDuplicatesAlbumsApi(albums []AlbumsApiData) []AlbumsApiData {
+	var newAlbums []AlbumsApiData
+
+	for _, album := range albums {
+		if len(newAlbums) == 0 {
+			newAlbums = append(newAlbums, album)
+		} else {
+			for i, newAlbum := range newAlbums {
+				if album.Title == newAlbum.Title {
+					break
+				}
+				if i == len(newAlbums)-1 {
+					newAlbums = append(newAlbums, album)
+				}
+			}
+		}
+	}
+	return newAlbums
+}
+
 func removeDuplicateStr(strSlice []string) []string {
 	var list []string
 	allKeys := make(map[string]bool)
@@ -251,7 +279,7 @@ func HandlerProfile(w http.ResponseWriter, r *http.Request) {
 		pProfile := ProfilePage{
 			ArtistId:  artistId,
 			Artist:    artist[artistId-1],
-			Albums:    GetArtistAlbums(artistApi.Id),
+			Albums:    FilterAlbums(GetArtistAlbums(artistApi.Id)),
 			ArtistApi: artistApi,
 		}
 		t, _ := template.ParseGlob("templates/*.html")
@@ -273,7 +301,7 @@ func HandlerProfiledates(w http.ResponseWriter, r *http.Request) {
 		pProfile := ProfilePage{
 			ArtistId:  artistId,
 			Artist:    artist[artistId-1],
-			Albums:    GetArtistAlbums(artistApi.Id),
+			Albums:    FilterAlbums(GetArtistAlbums(artistApi.Id)),
 			ArtistApi: artistApi,
 		}
 		t, _ := template.ParseGlob("templates/*.html")
