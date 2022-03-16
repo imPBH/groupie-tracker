@@ -16,7 +16,9 @@
             <a href="homepage" class="homepage-bttn">
                 <img src="/templates/resources/home.svg" class="icon">
             </a>
-            <img src="/templates/resources/discover.svg" class="icon">
+            <a href="profile?id={{.RandomId}}" class="homepage-bttn">
+                <img src="/templates/resources/discover.svg" class="icon">
+            </a>
             <img src="/templates/resources/like.svg" class="icon">
         </div>
     </div>
@@ -50,7 +52,7 @@
             <div class="profile-bio">
                 <p>
                     {{range .Artist.Members}}
-                        {{.}}.
+                    {{.}}.
                     {{end}}
                 </p>
             </div>

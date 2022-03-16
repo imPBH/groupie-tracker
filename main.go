@@ -6,14 +6,17 @@ import (
 	"html/template"
 	"io/ioutil"
 	"log"
+	"math/rand"
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type Page struct {
-	Title   string
-	Artists *[]Artist
+	Title    string
+	Artists  *[]Artist
+	RandomId int
 }
 
 type ProfilePage struct {
@@ -21,6 +24,7 @@ type ProfilePage struct {
 	Artist    Artist
 	Albums    []AlbumsApiData
 	ArtistApi SearchApiData
+	RandomId  int
 }
 
 type Artist struct {
@@ -85,8 +89,9 @@ type AlbumsApi struct {
 var imagesURLs []string
 var artist []Artist
 var p = Page{
-	Title:   "Groupie Tracker",
-	Artists: &artist,
+	Title:    "Groupie Tracker",
+	Artists:  &artist,
+	RandomId: GenRandomId(),
 }
 
 func main() {
@@ -231,7 +236,7 @@ func RemoveDuplicatesAlbumsApi(albums []AlbumsApiData) []AlbumsApiData {
 			newAlbums = append(newAlbums, album)
 		} else {
 			for i, newAlbum := range newAlbums {
-				if album.Title == newAlbum.Title {
+				if strings.ToLower(album.Title) == strings.ToLower(newAlbum.Title) {
 					break
 				}
 				if i == len(newAlbums)-1 {
@@ -255,7 +260,14 @@ func removeDuplicateStr(strSlice []string) []string {
 	return list
 }
 
+func GenRandomId() int {
+	artist = GetArtists()
+	rand.Seed(time.Now().UnixNano())
+	return rand.Intn(len(artist))
+}
+
 func HandlerHomepage(w http.ResponseWriter, r *http.Request) {
+	p.RandomId = GenRandomId()
 	t, _ := template.ParseGlob("templates/*.html")
 	t.ExecuteTemplate(w, "homepage.html", p)
 }
@@ -275,12 +287,12 @@ func HandlerProfile(w http.ResponseWriter, r *http.Request) {
 		artistIdString := r.FormValue("id")
 		artistId, _ := strconv.Atoi(artistIdString)
 		artistApi := GetArtistApi(artist[artistId-1].Name)
-
 		pProfile := ProfilePage{
 			ArtistId:  artistId,
 			Artist:    artist[artistId-1],
 			Albums:    FilterAlbums(GetArtistAlbums(artistApi.Id)),
 			ArtistApi: artistApi,
+			RandomId:  GenRandomId(),
 		}
 		t, _ := template.ParseGlob("templates/*.html")
 		t.ExecuteTemplate(w, "profile.html", pProfile)
@@ -303,6 +315,7 @@ func HandlerProfiledates(w http.ResponseWriter, r *http.Request) {
 			Artist:    artist[artistId-1],
 			Albums:    FilterAlbums(GetArtistAlbums(artistApi.Id)),
 			ArtistApi: artistApi,
+			RandomId:  GenRandomId(),
 		}
 		t, _ := template.ParseGlob("templates/*.html")
 		t.ExecuteTemplate(w, "profiledates.html", pProfile)
