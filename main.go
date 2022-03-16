@@ -198,7 +198,7 @@ func GetArtistApi(name string) SearchApiData {
 func GetArtistAlbums(artistId int) []AlbumsApiData {
 	var dataApi AlbumsApi
 
-	url := "https://api.deezer.com/artist/" + strconv.Itoa(artistId) + "/albums"
+	url := "https://api.deezer.com/artist/" + strconv.Itoa(artistId) + "/albums&limit=500"
 	resp, err := http.Get(url)
 	if err != nil {
 		log.Fatalln(err)
