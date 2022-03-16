@@ -77,9 +77,18 @@
         </div>
         <div class="gallery">
             {{range .Albums}}
-            <div class="gallery-item">
-                <img src={{.Cover}}
-                     class="gallery-image">
+            <div class="flip-card">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <img src={{.Cover}}
+                             class="gallery-image">
+                    </div>
+                    <div class="flip-card-back">
+                        <iframe title="deezer-widget" src="https://widget.deezer.com/widget/auto/album/{{.Id}}"
+                                width="285px" height="285px" frameborder="0" allowtransparency="true"
+                                allow="encrypted-media; clipboard-write"></iframe>
+                    </div>
+                </div>
             </div>
             {{end}}
         </div>

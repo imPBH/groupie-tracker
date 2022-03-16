@@ -11,7 +11,7 @@ body{
                     rgba(0, 0, 0, 0.8)
             ),
                 /* bottom, image */
-            url("resources/stage.jpg") no-repeat center center fixed;
+            url("/templates/resources/stage.jpg") no-repeat center center fixed;
 }
 
 
