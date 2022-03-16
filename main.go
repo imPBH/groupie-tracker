@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 type Page struct {
@@ -41,6 +42,28 @@ type Location struct {
 type Relation struct {
 	Id            int                 `json:"id"`
 	DatesLocation map[string][]string `json:"datesLocations"`
+}
+
+type SearchApi struct {
+	Data  []SearchApiData `json:"data"`
+	Total int             `json:"total"`
+	Next  string          `json:"next"`
+}
+
+type SearchApiData struct {
+	Id            int    `json:"id"`
+	Name          string `json:"name"`
+	Link          string `json:"link"`
+	Picture       string `json:"picture"`
+	PictureSmall  string `json:"picture_small"`
+	PictureMedium string `json:"picture_medium"`
+	PictureBig    string `json:"picture_big"`
+	PictureXl     string `json:"picture_xl"`
+	NbAlbum       int    `json:"nb_album"`
+	NbFan         int    `json:"nb_fan"`
+	Radio         bool   `json:"radio"`
+	Tracklist     string `json:"tracklist"`
+	Type          string `json:"type"`
 }
 
 var imagesURLs []string
@@ -133,6 +156,25 @@ func GetRelation(url string) Relation {
 	json.Unmarshal([]byte(sb), &relationData)
 
 	return relationData
+}
+
+func GetArtistApiId(name string) int {
+	var dataApi SearchApi
+
+	url := "https://api.deezer.com/search/artist/?q=" + strings.Replace(name, " ", "%20", 1) + "&index=0&limit=1"
+	resp, err := http.Get(url)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	//Convert the body to type string
+	sb := string(body)
+	json.Unmarshal([]byte(sb), &dataApi)
+	return dataApi.Data[0].Id
 }
 
 func removeDuplicateStr(strSlice []string) []string {
