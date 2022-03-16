@@ -17,9 +17,10 @@ type Page struct {
 }
 
 type ProfilePage struct {
-	ArtistId int
-	Artist   Artist
-	Albums   []AlbumsApiData
+	ArtistId  int
+	Artist    Artist
+	Albums    []AlbumsApiData
+	ArtistApi SearchApiData
 }
 
 type Artist struct {
@@ -245,11 +246,13 @@ func HandlerProfile(w http.ResponseWriter, r *http.Request) {
 		}
 		artistIdString := r.FormValue("id")
 		artistId, _ := strconv.Atoi(artistIdString)
+		artistApi := GetArtistApi(artist[artistId-1].Name)
 
 		pProfile := ProfilePage{
-			ArtistId: artistId,
-			Artist:   artist[artistId-1],
-			Albums:   GetArtistAlbums(GetArtistApi(artist[artistId-1].Name).Id),
+			ArtistId:  artistId,
+			Artist:    artist[artistId-1],
+			Albums:    GetArtistAlbums(artistApi.Id),
+			ArtistApi: artistApi,
 		}
 		t, _ := template.ParseGlob("templates/*.html")
 		t.ExecuteTemplate(w, "profile.html", pProfile)
@@ -265,11 +268,13 @@ func HandlerProfiledates(w http.ResponseWriter, r *http.Request) {
 		}
 		artistIdString := r.FormValue("id")
 		artistId, _ := strconv.Atoi(artistIdString)
+		artistApi := GetArtistApi(artist[artistId-1].Name)
 
 		pProfile := ProfilePage{
-			ArtistId: artistId,
-			Artist:   artist[artistId-1],
-			Albums:   GetArtistAlbums(GetArtistApi(artist[artistId-1].Name).Id),
+			ArtistId:  artistId,
+			Artist:    artist[artistId-1],
+			Albums:    GetArtistAlbums(artistApi.Id),
+			ArtistApi: artistApi,
 		}
 		t, _ := template.ParseGlob("templates/*.html")
 		t.ExecuteTemplate(w, "profiledates.html", pProfile)
