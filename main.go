@@ -19,6 +19,7 @@ type Page struct {
 type ProfilePage struct {
 	ArtistId int
 	Artist   Artist
+	Albums   []AlbumsApiData
 }
 
 type Artist struct {
@@ -51,19 +52,33 @@ type SearchApi struct {
 }
 
 type SearchApiData struct {
-	Id            int    `json:"id"`
-	Name          string `json:"name"`
-	Link          string `json:"link"`
-	Picture       string `json:"picture"`
-	PictureSmall  string `json:"picture_small"`
-	PictureMedium string `json:"picture_medium"`
-	PictureBig    string `json:"picture_big"`
-	PictureXl     string `json:"picture_xl"`
-	NbAlbum       int    `json:"nb_album"`
-	NbFan         int    `json:"nb_fan"`
-	Radio         bool   `json:"radio"`
-	Tracklist     string `json:"tracklist"`
-	Type          string `json:"type"`
+	Id        int    `json:"id"`
+	Name      string `json:"name"`
+	Link      string `json:"link"`
+	PictureXl string `json:"picture_xl"`
+	NbAlbum   int    `json:"nb_album"`
+	NbFan     int    `json:"nb_fan"`
+}
+
+type ArtistApiData struct {
+	Id   int    `json:"id"`
+	Name string `json:"name"`
+	Link string `json:"link"`
+}
+
+type AlbumsApiData struct {
+	Id          int    `json:"id"`
+	Title       string `json:"title"`
+	Cover       string `json:"cover_xl"`
+	Fans        int    `json:"fans"`
+	ReleaseDate string `json:"release_date"`
+	RecordType  string `json:"record_type"`
+	Tracklist   string `json:"tracklist"`
+}
+
+type AlbumsApi struct {
+	Data  []AlbumsApiData `json:"data"`
+	Total int             `json:"total"`
 }
 
 var imagesURLs []string
@@ -76,6 +91,9 @@ var p = Page{
 func main() {
 	artist = GetArtists()
 
+	artist := GetArtistApi("PNL")
+	albums := GetArtistAlbums(artist.Id)
+	fmt.Println(albums)
 	fs := http.FileServer(http.Dir("templates"))
 	router := http.NewServeMux()
 
@@ -158,10 +176,10 @@ func GetRelation(url string) Relation {
 	return relationData
 }
 
-func GetArtistApiId(name string) int {
+func GetArtistApi(name string) SearchApiData {
 	var dataApi SearchApi
 
-	url := "https://api.deezer.com/search/artist/?q=" + strings.Replace(name, " ", "%20", 1) + "&index=0&limit=1"
+	url := "https://api.deezer.com/search/artist/?q=" + strings.Replace(name, " ", "%20", 10) + "&index=0&limit=1"
 	resp, err := http.Get(url)
 	if err != nil {
 		log.Fatalln(err)
@@ -174,7 +192,26 @@ func GetArtistApiId(name string) int {
 	//Convert the body to type string
 	sb := string(body)
 	json.Unmarshal([]byte(sb), &dataApi)
-	return dataApi.Data[0].Id
+	return dataApi.Data[0]
+}
+
+func GetArtistAlbums(artistId int) []AlbumsApiData {
+	var dataApi AlbumsApi
+
+	url := "https://api.deezer.com/artist/" + strconv.Itoa(artistId) + "/albums"
+	resp, err := http.Get(url)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	//Convert the body to type string
+	sb := string(body)
+	json.Unmarshal([]byte(sb), &dataApi)
+	return dataApi.Data
 }
 
 func removeDuplicateStr(strSlice []string) []string {
@@ -208,8 +245,11 @@ func HandlerProfile(w http.ResponseWriter, r *http.Request) {
 		}
 		artistIdString := r.FormValue("id")
 		artistId, _ := strconv.Atoi(artistIdString)
+
 		pProfile := ProfilePage{
-			Artist: artist[artistId-1],
+			ArtistId: artistId,
+			Artist:   artist[artistId-1],
+			Albums:   GetArtistAlbums(GetArtistApi(artist[artistId-1].Name).Id),
 		}
 		t, _ := template.ParseGlob("templates/*.html")
 		t.ExecuteTemplate(w, "profile.html", pProfile)
