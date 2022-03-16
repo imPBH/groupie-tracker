@@ -265,8 +265,11 @@ func HandlerProfiledates(w http.ResponseWriter, r *http.Request) {
 		}
 		artistIdString := r.FormValue("id")
 		artistId, _ := strconv.Atoi(artistIdString)
+
 		pProfile := ProfilePage{
-			Artist: artist[artistId-1],
+			ArtistId: artistId,
+			Artist:   artist[artistId-1],
+			Albums:   GetArtistAlbums(GetArtistApi(artist[artistId-1].Name).Id),
 		}
 		t, _ := template.ParseGlob("templates/*.html")
 		t.ExecuteTemplate(w, "profiledates.html", pProfile)

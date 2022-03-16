@@ -34,7 +34,7 @@
             <div class="profile-stats">
                 <ul>
                     <li>
-                        <span class="profile-stat-count">5</span>
+                        <span class="profile-stat-count">{{ len .Albums }}</span>
                         albums
                     </li>
                     <li>
@@ -50,7 +50,7 @@
             <div class="profile-bio">
                 <p>
                     {{range .Artist.Members}}
-                    {{.}}.
+                        {{.}}.
                     {{end}}
                 </p>
             </div>
