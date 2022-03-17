@@ -20,11 +20,13 @@ type Page struct {
 }
 
 type ProfilePage struct {
-	ArtistId  int
-	Artist    Artist
-	Albums    []AlbumsApiData
-	ArtistApi SearchApiData
-	RandomId  int
+	ArtistId       int
+	Artist         Artist
+	Albums         []AlbumsApiData
+	ArtistApi      SearchApiData
+	RandomId       int
+	Locations      []string
+	DatesLocations map[string][]string
 }
 
 type Artist struct {
@@ -74,7 +76,7 @@ type ArtistApiData struct {
 type AlbumsApiData struct {
 	Id          int    `json:"id"`
 	Title       string `json:"title"`
-	Cover       string `json:"cover_xl"`
+	Cover       string `json:"cover_medium"`
 	Fans        int    `json:"fans"`
 	ReleaseDate string `json:"release_date"`
 	RecordType  string `json:"record_type"`
@@ -310,12 +312,19 @@ func HandlerProfiledates(w http.ResponseWriter, r *http.Request) {
 		artistId, _ := strconv.Atoi(artistIdString)
 		artistApi := GetArtistApi(artist[artistId-1].Name)
 
+		datesLocations := GetRelation(artist[artistId-1].Relations).DatesLocation
+		locations := GetLocations(artist[artistId-1].Locations).Locations
+		locations = removeDuplicateStr(locations)
+
+
 		pProfile := ProfilePage{
-			ArtistId:  artistId,
-			Artist:    artist[artistId-1],
-			Albums:    FilterAlbums(GetArtistAlbums(artistApi.Id)),
-			ArtistApi: artistApi,
-			RandomId:  GenRandomId(),
+			ArtistId:       artistId,
+			Artist:         artist[artistId-1],
+			Albums:         FilterAlbums(GetArtistAlbums(artistApi.Id)),
+			ArtistApi:      artistApi,
+			RandomId:       GenRandomId(),
+			Locations:      locations,
+			DatesLocations: datesLocations,
 		}
 		t, _ := template.ParseGlob("templates/*.html")
 		t.ExecuteTemplate(w, "profiledates.html", pProfile)
