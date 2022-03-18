@@ -393,7 +393,7 @@ body {
 }
 
 .input-dropdown:checked ~ .content-dropdown {
-    max-height: 400px;
+    max-height: none;
     transition: max-height, 1s;
 }
 

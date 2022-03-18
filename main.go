@@ -27,6 +27,7 @@ type ProfilePage struct {
 	RandomId       int
 	Locations      []string
 	DatesLocations map[string][]string
+	LatsLongs      map[string]map[string]float64
 }
 
 type Artist struct {
@@ -88,6 +89,18 @@ type AlbumsApi struct {
 	Total int             `json:"total"`
 }
 
+type LatLongApi struct {
+	Results []LatLongApiResult
+}
+
+type LatLongApiResult struct {
+	Locations []LatLongApiResultLocation
+}
+
+type LatLongApiResultLocation struct {
+	LatLng map[string]float64
+}
+
 var imagesURLs []string
 var artist []Artist
 var p = Page{
@@ -97,6 +110,7 @@ var p = Page{
 }
 
 func main() {
+	fmt.Println(GetLatLongApi("Saint-Lys"))
 	artist = GetArtists()
 
 	fs := http.FileServer(http.Dir("templates"))
@@ -268,6 +282,34 @@ func GenRandomId() int {
 	return rand.Intn(len(artist))
 }
 
+func GetLatLongApi(location string) map[string]float64 {
+	var dataApi LatLongApi
+
+	url := "https://open.mapquestapi.com/geocoding/v1/address?key=37GzZAcEPu9TQdvGkZ3DREYAPaLVNZBC&location=" + location + "&thumbMaps=false&maxResults=1"
+	resp, err := http.Get(url)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatalln(err)
+	}
+	//Convert the body to type string
+	sb := string(body)
+	json.Unmarshal([]byte(sb), &dataApi)
+	return dataApi.Results[0].Locations[0].LatLng
+}
+
+func GetLatLong(cities []string) map[string]map[string]float64 {
+	m := make(map[string]map[string]float64)
+
+	for _, city := range cities {
+		m[city] = GetLatLongApi(city)
+	}
+	return m
+}
+
 func HandlerHomepage(w http.ResponseWriter, r *http.Request) {
 	p.RandomId = GenRandomId()
 	t, _ := template.ParseGlob("templates/*.html")
@@ -316,7 +358,6 @@ func HandlerProfiledates(w http.ResponseWriter, r *http.Request) {
 		locations := GetLocations(artist[artistId-1].Locations).Locations
 		locations = removeDuplicateStr(locations)
 
-
 		pProfile := ProfilePage{
 			ArtistId:       artistId,
 			Artist:         artist[artistId-1],
@@ -325,6 +366,7 @@ func HandlerProfiledates(w http.ResponseWriter, r *http.Request) {
 			RandomId:       GenRandomId(),
 			Locations:      locations,
 			DatesLocations: datesLocations,
+			LatsLongs:      GetLatLong(locations),
 		}
 		t, _ := template.ParseGlob("templates/*.html")
 		t.ExecuteTemplate(w, "profiledates.html", pProfile)
