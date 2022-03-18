@@ -111,8 +111,6 @@ var p = Page{
 }
 
 func main() {
-	fmt.Println(BeautifyLocation("dunedin-new_zealand"))
-	fmt.Println(GetLatLongApi("Saint-Lys"))
 	artist = GetArtists()
 
 	fs := http.FileServer(http.Dir("templates"))
@@ -288,7 +286,6 @@ func GetLatLongApi(location string) map[string]float64 {
 	var dataApi LatLongApi
 
 	url := "https://open.mapquestapi.com/geocoding/v1/address?key=37GzZAcEPu9TQdvGkZ3DREYAPaLVNZBC&location=" + strings.Replace(location, " ", "%20", 100) + "&thumbMaps=false&maxResults=1"
-	fmt.Println(url)
 	resp, err := http.Get(url)
 	if err != nil {
 		log.Fatalln(err)
