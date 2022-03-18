@@ -20,14 +20,15 @@ type Page struct {
 }
 
 type ProfilePage struct {
-	ArtistId       int
-	Artist         Artist
-	Albums         []AlbumsApiData
-	ArtistApi      SearchApiData
-	RandomId       int
-	Locations      []string
-	DatesLocations map[string][]string
-	LatsLongs      map[string]map[string]float64
+	ArtistId           int
+	Artist             Artist
+	Albums             []AlbumsApiData
+	ArtistApi          SearchApiData
+	RandomId           int
+	Locations          []string
+	DatesLocations     map[string][]string
+	LatsLongs          map[string]map[string]float64
+	BeautifulLocations map[string]string
 }
 
 type Artist struct {
@@ -110,6 +111,7 @@ var p = Page{
 }
 
 func main() {
+	fmt.Println(BeautifyLocation("dunedin-new_zealand"))
 	fmt.Println(GetLatLongApi("Saint-Lys"))
 	artist = GetArtists()
 
@@ -285,7 +287,8 @@ func GenRandomId() int {
 func GetLatLongApi(location string) map[string]float64 {
 	var dataApi LatLongApi
 
-	url := "https://open.mapquestapi.com/geocoding/v1/address?key=37GzZAcEPu9TQdvGkZ3DREYAPaLVNZBC&location=" + location + "&thumbMaps=false&maxResults=1"
+	url := "https://open.mapquestapi.com/geocoding/v1/address?key=37GzZAcEPu9TQdvGkZ3DREYAPaLVNZBC&location=" + strings.Replace(location, " ", "%20", 100) + "&thumbMaps=false&maxResults=1"
+	fmt.Println(url)
 	resp, err := http.Get(url)
 	if err != nil {
 		log.Fatalln(err)
@@ -301,13 +304,27 @@ func GetLatLongApi(location string) map[string]float64 {
 	return dataApi.Results[0].Locations[0].LatLng
 }
 
-func GetLatLong(cities []string) map[string]map[string]float64 {
+func GetLatLong(cities []string, citiesMap map[string]string) map[string]map[string]float64 {
 	m := make(map[string]map[string]float64)
 
 	for _, city := range cities {
-		m[city] = GetLatLongApi(city)
+		m[city] = GetLatLongApi(citiesMap[city])
 	}
 	return m
+}
+
+func BeautifyLocation(location string) string {
+	test := strings.Replace(location, "-", ", ", 100)
+	test = strings.Replace(test, "_", "-", 100)
+	return strings.ToUpper(test)
+}
+
+func BeautifyLocations(locations []string) map[string]string {
+	newLocations := make(map[string]string)
+	for _, location := range locations {
+		newLocations[location] = BeautifyLocation(location)
+	}
+	return newLocations
 }
 
 func HandlerHomepage(w http.ResponseWriter, r *http.Request) {
@@ -357,16 +374,18 @@ func HandlerProfiledates(w http.ResponseWriter, r *http.Request) {
 		datesLocations := GetRelation(artist[artistId-1].Relations).DatesLocation
 		locations := GetLocations(artist[artistId-1].Locations).Locations
 		locations = removeDuplicateStr(locations)
+		beautifulLocations := BeautifyLocations(locations)
 
 		pProfile := ProfilePage{
-			ArtistId:       artistId,
-			Artist:         artist[artistId-1],
-			Albums:         FilterAlbums(GetArtistAlbums(artistApi.Id)),
-			ArtistApi:      artistApi,
-			RandomId:       GenRandomId(),
-			Locations:      locations,
-			DatesLocations: datesLocations,
-			LatsLongs:      GetLatLong(locations),
+			ArtistId:           artistId,
+			Artist:             artist[artistId-1],
+			Albums:             FilterAlbums(GetArtistAlbums(artistApi.Id)),
+			ArtistApi:          artistApi,
+			RandomId:           GenRandomId(),
+			Locations:          locations,
+			DatesLocations:     datesLocations,
+			LatsLongs:          GetLatLong(locations, beautifulLocations),
+			BeautifulLocations: beautifulLocations,
 		}
 		t, _ := template.ParseGlob("templates/*.html")
 		t.ExecuteTemplate(w, "profiledates.html", pProfile)

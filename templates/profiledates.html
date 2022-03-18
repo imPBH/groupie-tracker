@@ -81,7 +81,7 @@
             <div class="dropdown-item">
                 <input type="radio" class="input-dropdown" id={{.}} name="tabs">
                 <label class="label-dropdown" for={{.}}>
-                    <div class="city-dropdown"><a style="font-weight: bold">{{.}}</a></div>
+                    <div class="city-dropdown"><a style="font-weight: bold">{{index $.BeautifulLocations .}}</a></div>
                     <div class="cross"></div>
                 </label>
                 <div class="content-dropdown">{{range index $.DatesLocations .}}{{.}}<br>{{end}}
