@@ -69,12 +69,6 @@ type SearchApiData struct {
 	NbFan     int    `json:"nb_fan"`
 }
 
-type ArtistApiData struct {
-	Id   int    `json:"id"`
-	Name string `json:"name"`
-	Link string `json:"link"`
-}
-
 type AlbumsApiData struct {
 	Id          int    `json:"id"`
 	Title       string `json:"title"`
@@ -102,7 +96,6 @@ type LatLongApiResultLocation struct {
 	LatLng map[string]float64
 }
 
-var imagesURLs []string
 var artist []Artist
 var p = Page{
 	Title:    "Groupie Tracker",
